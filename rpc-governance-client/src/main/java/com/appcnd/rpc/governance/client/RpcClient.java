@@ -71,16 +71,17 @@ public class RpcClient implements ApplicationContextAware, InitializingBean {
         // 遍历需要监听的服务，依次向spring中注册服务代理对象
         for (Class<?> serviceClass : serviceClasses.keySet()) {
             String serviceVersion = serviceClasses.get(serviceClass);
-            // 如果是接口类型，使用Java动态代理
+            Object serviceBean = null;
+            // 如果是接口类型，使用JDK动态代理
             if (serviceClass.isInterface()) {
                 // 获取服务代理对象
-                Object serviceBean = rpcProxy.createDynamicProxy(serviceClass, serviceVersion);
-                // 向spring注册服务代理对象
-                beanFactory.registerSingleton(serviceClass.getName(), serviceBean);
+                serviceBean = rpcProxy.createDynamicProxy(serviceClass, serviceVersion);
             }
             else {// 如果不是接口，使用cglib字节码代理
-
+                serviceBean = rpcProxy.createBtyebodeProxy(serviceClass, serviceVersion);
             }
+            // 向spring注册服务代理对象
+            beanFactory.registerSingleton(serviceClass.getName(), serviceBean);
         }
     }
 }

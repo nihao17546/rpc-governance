@@ -17,6 +17,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +43,13 @@ public class RpcProxy {
         return createDynamicProxy(interfaceClass, "");
     }
 
+    /**
+     * JDK动态代理
+     * @param interfaceClass
+     * @param serviceVersion
+     * @param <T>
+     * @return
+     */
     public final <T> T createDynamicProxy(final Class<T> interfaceClass, final String serviceVersion) {
         return (T) Proxy.newProxyInstance(
                 interfaceClass.getClassLoader(),
@@ -47,36 +57,63 @@ public class RpcProxy {
                 new InvocationHandler() {
                     @Override
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        // 创建 RPC 请求对象并设置请求属性
-                        RpcRequest request = new RpcRequest();
-                        request.setRequestId(UUID.randomUUID().toString());
-                        request.setClassName(method.getDeclaringClass().getName());
-                        request.setServiceVersion(serviceVersion);
-                        request.setMethodName(method.getName());
-                        request.setParameterTypes(method.getParameterTypes());
-                        request.setParameters(args);
-                        // 获取 RPC 服务地址
-                        String serviceName = interfaceClass.getName();
-                        if (StringUtil.isNotEmpty(serviceVersion)) {
-                            serviceName += "-" + serviceVersion;
-                        }
-                        RpcProvider rpcProvider = serviceDiscovery.discover(serviceName);
-                        // 调用请求
-                        long time = System.currentTimeMillis();
-                        RpcResponse response = send(request, rpcProvider);
-                        logger.debug("time: {}ms", System.currentTimeMillis() - time);
-                        if (response == null) {
-                            throw new NoResponseException("no response for " + rpcProvider);
-                        }
-                        // 返回 RPC 响应结果
-                        if (response.hasException()) {
-                            throw response.getException();
-                        } else {
-                            return response.getResult();
-                        }
+                        return handler(method, args, interfaceClass, serviceVersion);
                     }
                 }
         );
+    }
+
+    public final <T> T createBtyebodeProxy(final Class<T> clazz) {
+        return createBtyebodeProxy(clazz, "");
+    }
+
+    /**
+     * cglib动态代理
+     * @param clazz
+     * @param serviceVersion
+     * @param <T>
+     * @return
+     */
+    public final <T> T createBtyebodeProxy(final Class<T> clazz, final String serviceVersion) {
+        Enhancer en = new Enhancer();
+        en.setSuperclass(clazz);
+        en.setCallback(new MethodInterceptor() {
+            @Override
+            public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+               return handler(method, objects, clazz, serviceVersion);
+            }
+        });
+        return (T) en.create();
+    }
+
+    private Object handler(Method method, Object[] args, Class<?> clazz, String serviceVersion) throws Exception {
+        // 创建 RPC 请求对象并设置请求属性
+        RpcRequest request = new RpcRequest();
+        request.setRequestId(UUID.randomUUID().toString());
+        request.setClassName(method.getDeclaringClass().getName());
+        request.setServiceVersion(serviceVersion);
+        request.setMethodName(method.getName());
+        request.setParameterTypes(method.getParameterTypes());
+        request.setParameters(args);
+        // 获取 RPC 服务地址
+        String serviceName = clazz.getName();
+        if (StringUtil.isNotEmpty(serviceVersion)) {
+            serviceName += "-" + serviceVersion;
+        }
+        RpcProvider rpcProvider = serviceDiscovery.discover(serviceName);
+        // 调用请求
+        long time = System.currentTimeMillis();
+        RpcResponse response = send(request, rpcProvider);
+        logger.debug("time: {}ms", System.currentTimeMillis() - time);
+        if (response == null) {
+            throw new NoResponseException("no response for " + rpcProvider);
+        }
+        // 返回 RPC 响应结果
+        if (response.hasException()) {
+            throw response.getException();
+        } else {
+            return response.getResult();
+        }
     }
 
     private RpcResponse send(RpcRequest request, RpcProvider rpcProvider) throws Exception {
