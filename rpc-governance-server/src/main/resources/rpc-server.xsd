@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.appcnd.com/schema/rpc-server"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.appcnd.com/schema/rpc-server"
+            elementFormDefault="qualified">
+
+    <xsd:element name="server">
+        <xsd:complexType>
+            <xsd:attribute name="id" type="xsd:string"/>
+            <xsd:attribute name="host" type="xsd:string"/>
+            <xsd:attribute name="port" type="xsd:int" use="required"/>
+            <xsd:attribute name="zkAddress" type="xsd:string" use="required"/>
+            <xsd:attribute name="zkSessionTimeout" type="xsd:int" use="required"/>
+            <xsd:attribute name="zkConnectionTimeout" type="xsd:int" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

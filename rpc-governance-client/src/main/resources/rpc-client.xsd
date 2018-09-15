@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.appcnd.com/schema/rpc-client"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.appcnd.com/schema/rpc-client"
+            elementFormDefault="qualified">
+
+    <xsd:attributeGroup name="attrs">
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="zkAddress" type="xsd:string" use="required"/>
+        <xsd:attribute name="zkConnectionTimeout" type="xsd:long" use="required"/>
+        <xsd:attribute name="zkSessionTimeout" type="xsd:long" use="required"/>
+        <xsd:attribute name="balance" default="random">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="random"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:element name="service">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="name" type="xsd:string"/>
+                <xsd:element name="version" type="xsd:string" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="client">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="service" maxOccurs="unbounded"/>
+            </xsd:sequence>
+            <xsd:attributeGroup ref="attrs"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
