@@ -104,19 +104,21 @@ public class ServiceDiscovery {
      * @return
      */
     public RpcProvider discover(String serviceName) {
-        Map<String,RpcProvider> rpcProviderMap = providerMap.get(serviceName);
         // 筛选出所有有效的提供者
-        List<RpcProvider> availableProviders = new ArrayList<>();
-        Iterator<RpcProvider> iterator = rpcProviderMap.values().iterator();
-        while (iterator.hasNext()) {
-            RpcProvider provider = iterator.next();
-            if (provider.getActive() == 1) {
-                availableProviders.add(provider);
+        if (providerMap.containsKey(serviceName)) {
+            Map<String,RpcProvider> rpcProviderMap = providerMap.get(serviceName);
+            List<RpcProvider> availableProviders = new ArrayList<>();
+            Iterator<RpcProvider> iterator = rpcProviderMap.values().iterator();
+            while (iterator.hasNext()) {
+                RpcProvider provider = iterator.next();
+                if (provider.getActive() == 1) {
+                    availableProviders.add(provider);
+                }
+            }
+            if (!availableProviders.isEmpty()) {
+                return rpcBalance.select(availableProviders);
             }
         }
-        if (availableProviders.isEmpty()) {
-            throw new NoAvailableProviderException(serviceName);
-        }
-        return rpcBalance.select(availableProviders);
+        throw new NoAvailableProviderException(serviceName);
     }
 }
