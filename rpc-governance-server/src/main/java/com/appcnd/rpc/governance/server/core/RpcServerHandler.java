@@ -32,7 +32,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
         threadPoolExecutor.submit(() -> {
             // 创建并初始化 RPC 响应对象
             RpcResponse response = new RpcResponse();

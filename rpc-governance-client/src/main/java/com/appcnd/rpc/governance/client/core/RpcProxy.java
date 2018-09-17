@@ -63,8 +63,8 @@ public class RpcProxy {
         );
     }
 
-    public final <T> T createBtyebodeProxy(final Class<T> clazz) {
-        return createBtyebodeProxy(clazz, "");
+    public final <T> T createBytebodeProxy(final Class<T> clazz) {
+        return createBytebodeProxy(clazz, "");
     }
 
     /**
@@ -74,7 +74,7 @@ public class RpcProxy {
      * @param <T>
      * @return
      */
-    public final <T> T createBtyebodeProxy(final Class<T> clazz, final String serviceVersion) {
+    public final <T> T createBytebodeProxy(final Class<T> clazz, final String serviceVersion) {
         Enhancer en = new Enhancer();
         en.setSuperclass(clazz);
         en.setCallback(new MethodInterceptor() {

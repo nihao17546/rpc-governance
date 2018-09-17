@@ -15,7 +15,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     RpcResponse response;
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, RpcResponse response) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RpcResponse response) throws Exception {
         this.response = response;
     }
 
