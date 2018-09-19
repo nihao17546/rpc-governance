@@ -11,8 +11,14 @@
     </el-header>
     <el-main class="el-main-class">
       <div style="padding: 9px;background-color: #f3f5f5;border: #cccccc 1px solid" v-loading="loading">
+        <div style="margin-bottom: 5px;">
+          <el-input style="width: 350px;border-radius: 0px;" @keyup.enter.native="search" v-on:clear="search" v-model.trim="searchKey" size="small" placeholder="请输入服务名" clearable>
+            <template slot="prepend">服务名</template>
+          </el-input>
+          <el-button type="primary" :loading="loading" icon="el-icon-search" size="mini"  style="border-radius: 0px;" @click="search">搜索</el-button>
+        </div>
         <el-table
-          :data="services.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+          :data="showServices.slice((currentPage-1)*pageSize,currentPage*pageSize)"
           style="width: 100%;">
           <el-table-column type="expand">
             <template slot-scope="props">
@@ -78,7 +84,7 @@
           </el-table-column>
           <el-table-column
             prop="createTime"
-            label="创建时间"
+            label="创建时间" sortable
             width="180" :formatter="formatDate">
           </el-table-column>
         </el-table>
@@ -101,13 +107,15 @@
     data() {
       return {
         services: [],
+        showServices: [],
         total: 0,
         pageSize: 10,
         currentPage: 1,
         changeWeightLoading: false,
         changeActiveLoading: false,
         currentUser: '',
-        loading: false
+        loading: false,
+        searchKey: ''
       }
     },
     methods: {
@@ -165,13 +173,16 @@
           this.changeWeightLoading = false;
         });
       },
-      getServices() {
+      getServices(successCallbackFun, failCallbackFun) {
         this.$axios.get(this.GLOBAL.httpUrlPrefix + "/list").then((res) => {
           this.services = res.data;
-          this.total = res.data.length;
-          this.loading = false;
+          if (successCallbackFun) {
+            successCallbackFun()
+          }
         }).catch((res) => {
-          this.loading = false;
+          if (failCallbackFun) {
+            failCallbackFun()
+          }
           if (res.response.status == 403) {
             this.$alert('重新登录', '没有权限', {
               confirmButtonText: '确定',
@@ -196,6 +207,28 @@
           });
         }).catch(() => {
         });
+      },
+      search() {
+        this.loading = true;
+        this.getServices(() => {
+          if (this.searchKey != '') {
+            let searchResult = [];
+            let reg = new RegExp(this.searchKey);
+            this.services.forEach(service => {
+              if (service.name.match(reg)) {
+                searchResult.push(service)
+              }
+            });
+            this.showServices = searchResult;
+          } else {
+            this.showServices = this.services;
+          }
+          this.total = this.showServices.length;
+          this.currentPage = 1;
+          this.loading = false;
+        }, () => {
+          this.loading = false;
+        })
       }
     },
     filters: {
@@ -221,7 +254,13 @@
             this.changeWeightLoading = true;
             this.changeActiveLoading = true;
           }
-          this.getServices();
+          this.getServices(() => {
+            this.showServices = this.services;
+            this.total = this.showServices.length;
+            this.loading = false;
+          }, () => {
+            this.loading = false;
+          });
         } else {
           this.$router.push({ name: 'login' });
         }
