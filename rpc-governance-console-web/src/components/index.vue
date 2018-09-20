@@ -13,9 +13,8 @@
       <div style="padding: 9px;background-color: #f3f5f5;border: #cccccc 1px solid" v-loading="loading">
         <div style="margin-bottom: 5px;">
           <el-input style="width: 350px;border-radius: 0px;" @keyup.enter.native="search" v-on:clear="search" v-model.trim="searchKey" size="small" placeholder="请输入服务名" clearable>
-            <template slot="prepend">服务名</template>
+            <el-button slot="append" :loading="loading" icon="el-icon-search" @click="search">搜索</el-button>
           </el-input>
-          <el-button type="primary" :loading="loading" icon="el-icon-search" size="mini"  style="border-radius: 0px;" @click="search">搜索</el-button>
         </div>
         <el-table
           :data="showServices.slice((currentPage-1)*pageSize,currentPage*pageSize)"
