@@ -183,7 +183,7 @@
             failCallbackFun()
           }
           if (res.response.status == 403) {
-            this.$alert('重新登录', '没有权限', {
+            this.$alert('请重新登录', '登录已过期', {
               confirmButtonText: '确定',
               callback: (action) => {
                 this.$router.push({ name: 'login' });
