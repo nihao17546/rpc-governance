@@ -78,7 +78,7 @@ public class RpcClient implements ApplicationContextAware, InitializingBean {
                 serviceBean = rpcProxy.createDynamicProxy(serviceClass, serviceVersion);
             }
             else {// 如果不是接口，使用cglib字节码代理
-                serviceBean = rpcProxy.createBytebodeProxy(serviceClass, serviceVersion);
+                serviceBean = rpcProxy.createBytecodeProxy(serviceClass, serviceVersion);
             }
             // 向spring注册服务代理对象
             beanFactory.registerSingleton(serviceClass.getName(), serviceBean);
