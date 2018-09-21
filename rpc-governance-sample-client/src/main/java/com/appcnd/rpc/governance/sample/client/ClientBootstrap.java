@@ -1,6 +1,7 @@
 package com.appcnd.rpc.governance.sample.client;
 
-import com.appcnd.rpc.governance.sample.api.UserService;
+import com.appcnd.rpc.governance.sample.api.ApiServiceA;
+import com.appcnd.rpc.governance.sample.api.ApiServiceB;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -10,10 +11,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ClientBootstrap {
     public static void main(String[] args) throws Exception {
         ApplicationContext context = new ClassPathXmlApplicationContext("client.xml");
-        UserService userService = context.getBean(UserService.class);
-        String s = userService.hello("988989");
-        System.out.println(s);
-        int c = userService.add(Integer.MAX_VALUE,99);
-        System.out.println(c);
+        ApiServiceA apiServiceA = context.getBean(ApiServiceA.class);
+        ApiServiceB apiServiceB = context.getBean(ApiServiceB.class);
+        System.out.println(apiServiceA.test("test111"));
+        System.out.println(apiServiceB.test("test222"));
     }
 }

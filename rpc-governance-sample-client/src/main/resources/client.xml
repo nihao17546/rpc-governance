@@ -10,10 +10,18 @@
        http://www.appcnd.com/schema/rpc-client
        http://www.appcnd.com/schema/rpc-client.xsd">
 
-    <rpc-client:client id="qqq" zkAddress="127.0.0.1:2181" zkConnectionTimeout="5000" zkSessionTimeout="5000">
+    <!--
+    rpc-client:name： api接口类型
+    rpc-client:version：版本号
+    -->
+    <rpc-client:client id="client" zkAddress="127.0.0.1:2181"
+                       zkConnectionTimeout="5000" zkSessionTimeout="5000">
         <rpc-client:service>
-            <rpc-client:name>com.appcnd.rpc.governance.sample.api.UserService</rpc-client:name>
-            <rpc-client:version>1</rpc-client:version>
+            <rpc-client:name>com.appcnd.rpc.governance.sample.api.ApiServiceA</rpc-client:name>
+        </rpc-client:service>
+        <rpc-client:service>
+            <rpc-client:name>com.appcnd.rpc.governance.sample.api.ApiServiceB</rpc-client:name>
+            <rpc-client:version>2.0</rpc-client:version>
         </rpc-client:service>
     </rpc-client:client>
 </beans>

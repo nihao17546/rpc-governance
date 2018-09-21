@@ -10,8 +10,17 @@
        http://www.appcnd.com/schema/rpc-server
        http://www.appcnd.com/schema/rpc-server.xsd">
 
+    <!-- 扫描RpcService -->
     <context:component-scan base-package="com.appcnd.rpc.governance.sample.server"/>
 
-    <rpc-server:server id="qwe" host="localhost" port="9091" zkAddress="127.0.0.1:2181" zkConnectionTimeout="5000"
+    <!--
+    host：服务绑定ip，默认InetAddress.getLocalHost()
+    port：服务端口
+    zkAddress：zookeeper集群地址
+    zkConnectionTimeout：zookeeper 连接超时时间
+    zkSessionTimeout：zookeeper session超时时间
+    -->
+    <rpc-server:server id="server" port="9091"
+                       zkAddress="127.0.0.1:2181" zkConnectionTimeout="5000"
                        zkSessionTimeout="5000"/>
 </beans>
