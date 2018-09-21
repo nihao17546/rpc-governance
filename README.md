@@ -177,6 +177,7 @@ public class ClientSample {
 }
 ~~~
 ### 管理控制台使用
+![sa](https://raw.githubusercontent.com/nihao17546/file/master/rpc-console.png)
 - 后端配置说明  
 >1.rpc-governance-console/src/main/resources/application-rpc.yml  
 ~~~yaml
