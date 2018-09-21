@@ -17,7 +17,7 @@
 客户端测试用例
 - rpc-governance-sample-server  
 服务端测试用例  
-### 用例
+### 使用说明
 - api接口
 ~~~Java
 package com.appcnd.rpc.governance.sample.api;
