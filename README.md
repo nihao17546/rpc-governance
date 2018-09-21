@@ -11,6 +11,12 @@
 管理控制台后端
 - rpc-governance-console-web  
 管理控制台前端
+- rpc-governance-sample  
+测试用例API包
+- rpc-governance-sample-client  
+客户端测试用例
+- rpc-governance-sample-server  
+服务端测试用例  
 ### 用例
 - api接口
 ~~~Java
